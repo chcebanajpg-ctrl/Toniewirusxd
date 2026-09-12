@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<title>Weż to kliknij XD (sory za wystraszenie)</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Courier New', monospace;
+    background: #000;
+    color: #0f0;
+    overflow: hidden;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: bgFlash 0.3s infinite alternate;
+  }
+
+  @keyframes bgFlash {
+    0%   { background: #000; }
+    50%  { background: #300; }
+    100% { background: #003; }
+  }
+
+  .screen {
+    text-align: center;
+    z-index: 10;
+    padding: 40px;
+    border: 4px solid #f00;
+    background: rgba(0,0,0,0.85);
+    box-shadow: 0 0 40px #f00, 0 0 80px #f00 inset;
+    animation: shake 0.15s infinite;
+    max-width: 90%;
+    border-radius: 10px;
+  }
+
+  @keyframes shake {
+    0%   { transform: translate(0,0) rotate(0deg); }
+    25%  { transform: translate(-3px, 2px) rotate(-0.5deg); }
+    50%  { transform: translate(3px, -2px) rotate(0.5deg); }
+    75%  { transform: translate(-2px, -3px) rotate(-0.3deg); }
+    100% { transform: translate(2px, 3px) rotate(0.3deg); }
+  }
+
+  h1 {
+    color: #f00;
+    font-size: 3em;
+    text-shadow: 0 0 20px #f00, 0 0 40px #f00;
+    margin-bottom: 20px;
+    animation: pulse 0.5s infinite alternate;
+  }
+
+  @keyframes pulse {
+    from { transform: scale(1); }
+    to   { transform: scale(1.08); }
+  }
+
+  p {
+    color: #ff0;
+    font-size: 1.2em;
+    margin: 15px 0;
+    text-shadow: 0 0 10px #ff0;
+  }
+
+  .warning {
+    color: #f00;
+    font-weight: bold;
+    font-size: 1.4em;
+    animation: blink 0.3s infinite;
+  }
+
+  @keyframes blink {
+    0%, 49%   { opacity: 1; }
+    50%, 100% { opacity: 0; }
+  }
+
+  button {
+    margin-top: 20px;
+    padding: 15px 40px;
+    font-size: 1.3em;
+    font-family: inherit;
+    font-weight: bold;
+    background: #f00;
+    color: #fff;
+    border: 3px solid #fff;
+    cursor: pointer;
+    text-transform: uppercase;
+    box-shadow: 0 0 20px #f00;
+    transition: all 0.2s;
+    border-radius: 8px;
+  }
+
+  button:hover {
+    background: #fff;
+    color: #f00;
+    box-shadow: 0 0 40px #fff;
+    transform: scale(1.1);
+  }
+
+  button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  #manualBtn {
+    background: #0a0;
+    box-shadow: 0 0 20px #0a0;
+    font-size: 1em;
+    padding: 10px 25px;
+    margin-top: 15px;
+  }
+
+  #manualBtn:hover {
+    background: #fff;
+    color: #0a0;
+    box-shadow: 0 0 40px #0f0;
+  }
+
+  .lights {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .light {
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.7;
+    mix-blend-mode: screen;
+  }
+
+  .l1 { background: #f00; animation: move1 3s infinite alternate; top: 10%; left: 10%; }
+  .l2 { background: #0f0; animation: move2 2.5s infinite alternate; top: 50%; right: 10%; }
+  .l3 { background: #00f; animation: move3 2s infinite alternate; bottom: 10%; left: 40%; }
+  .l4 { background: #ff0; animation: move1 1.8s infinite alternate-reverse; top: 30%; right: 30%; }
+  .l5 { background: #f0f; animation: move2 2.2s infinite alternate-reverse; bottom: 20%; right: 20%; }
+  .l6 { background: #0ff; animation: move3 2.7s infinite alternate-reverse; top: 70%; left: 20%; }
+
+  @keyframes move1 {
+    from { transform: translate(0,0) scale(1); }
+    to   { transform: translate(200px, 100px) scale(1.5); }
+  }
+  @keyframes move2 {
+    from { transform: translate(0,0) scale(1.2); }
+    to   { transform: translate(-150px, 200px) scale(0.8); }
+  }
+  @keyframes move3 {
+    from { transform: translate(0,0) scale(0.9); }
+    to   { transform: translate(100px, -150px) scale(1.6); }
+  }
+
+  .progress {
+    width: 100%;
+    height: 25px;
+    background: #222;
+    border: 2px solid #f00;
+    margin-top: 20px;
+    overflow: hidden;
+    border-radius: 5px;
+    display: none;
+  }
+
+  .bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #f00, #ff0, #0f0, #0ff, #00f, #f0f);
+    transition: width 0.1s;
+  }
+
+  #status {
+    margin-top: 15px;
+    color: #0f0;
+    font-size: 0.95em;
+    min-height: 1.5em;
+    word-break: break-all;
+  }
+
+  .info {
+    margin-top: 20px;
+    padding: 12px;
+    background: rgba(255,255,0,0.1);
+    border: 1px solid #ff0;
+    color: #ff0;
+    font-size: 0.85em;
+    border-radius: 6px;
+    display: none;
+    text-align: left;
+  }
+</style>
+</head>
+<body>
+
+<div class="lights">
+  <div class="light l1"></div>
+  <div class="light l2"></div>
+  <div class="light l3"></div>
+  <div class="light l4"></div>
+  <div class="light l5"></div>
+  <div class="light l6"></div>
+</div>
+
+<div class="screen">
+  <h1>Siema weż to kliknij</h1>
+  <p class="warning">widzę że system nie zabezpieczony</p>
+  <p>Ściągam ci moje pliki xd</p>
+  <p>XD lol</p>
+  <p style="color:#f00;">Kliknij przycisk, aby "uratować" system:</p>
+
+  <button id="startBtn">Zgadzam się i pobieram ratunek</button>
+  <br>
+  <button id="manualBtn" style="display:none;">⬇ Pobierz następny plik ręcznie</button>
+
+  <div class="progress" id="progressBox">
+    <div class="bar" id="bar"></div>
+  </div>
+  <div id="status"></div>
+
+  <div class="info" id="infoBox">
+    <b>💡 Jeśli pliki się nie pobierają:</b><br>
+    1. Sprawdź pasek adresu – przeglądarka mogła zapytać o zgodę na pobieranie wielu plików. Kliknij <b>„Zezwól"</b>.<br>
+    2. Sprawdź ikonę pobierania (strzałka w dół) w prawym górnym rogu.<br>
+    3. Kliknij przycisk <b>„Pobierz następny plik ręcznie"</b> powyżej – każde kliknięcie = jeden plik.<br>
+    4. Sprawdź folder <b>Pobrane</b> w systemie.
+  </div>
+</div>
+
+<script>
+// =============================================
+// Kod edukacyjny / żartobliwy.
+// Używaj wyłącznie za zgodą wszystkich obecnych.
+// =============================================
+
+const fileNames = [
+  'XDDDDD.txt',
+  'ratuj system mówię ci.txt',
+  'xd lol.txt',
+  '⠒̫⃝🌯 kjebab.txt',
+  'SPRAWDŹ SE SYSTEM XDD.txt',
+  'Usuwanie systemu.txt',
+  'użyj antywirusa.txt',
+  'Twoje hasła.txt',
+  'Dane Systemu.txt'
+];
+
+let currentIndex = 0;
+let downloading = false;
+
+const startBtn = document.getElementById('startBtn');
+const manualBtn = document.getElementById('manualBtn');
+const bar = document.getElementById('bar');
+const status = document.getElementById('status');
+const infoBox = document.getElementById('infoBox');
+const progressBox = document.getElementById('progressBox');
+
+// === Pobieranie pojedynczego pliku ===
+function downloadFile(name) {
+  const content =
+    '=====================================================\n' +
+    ' Twoje hasło do telefonu jest pisane sposobem ██████ \n' +
+    '=====================================================\n\n' +
+    'Plik: ' + name + '\n' +
+    'Data: ' + new Date().toLocaleString() + '\n\n' +
+    'Polecam po odwiedzeniu tej strony użyć anty wirusa xddd\n' +
+    'Twój komputer nie jest w 100 % całkowicie bezpieczny.\n';
+
+  const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = name;
+  a.style.display = 'none';
+  document.body.appendChild(a);
+  a.click();
+
+  setTimeout(() => {
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }, 2000);
+}
+
+// === Sekwencyjne pobieranie z opóźnieniem (wymóg przeglądarek) ===
+function downloadNext() {
+  if (currentIndex >= fileNames.length) {
+    status.textContent = '✔ Wszystkie pliki pobrane. System "uratowany". (To tylko żart 😄)';
+    status.style.color = '#0f0';
+    bar.style.width = '100%';
+    manualBtn.style.display = 'none';
+    startBtn.disabled = true;
+    startBtn.textContent = 'Zakończono';
+    return;
+  }
+
+  const name = fileNames[currentIndex];
+  downloadFile(name);
+
+  const percent = Math.round(((currentIndex + 1) / fileNames.length) * 100);
+  bar.style.width = percent + '%';
+  status.textContent = 'Pobieranie: ' + name + ' ... ' + percent + '%';
+  status.style.color = '#0f0';
+
+  currentIndex++;
+
+  // Kolejny plik po 800 ms
+  if (currentIndex < fileNames.length) {
+    setTimeout(downloadNext, 800);
+  } else {
+    setTimeout(downloadNext, 800);
+  }
+}
+
+// === Start ===
+startBtn.addEventListener('click', () => {
+  if (downloading) return;
+  downloading = true;
+  startBtn.disabled = true;
+  startBtn.textContent = 'Pobieranie...';
+
+  progressBox.style.display = 'block';
+  infoBox.style.display = 'block';
+
+  startSounds();
+  downloadNext();
+
+  // Pokazujemy przycisk ręczny po chwili
+  setTimeout(() => {
+    manualBtn.style.display = 'inline-block';
+  }, 1500);
+});
+
+// === Ręczne pobieranie (jeśli przeglądarka blokuje automat) ===
+manualBtn.addEventListener('click', () => {
+  if (currentIndex >= fileNames.length) {
+    // Reset do początku, jeśli już wszystko poszło
+    currentIndex = 0;
+    bar.style.width = '0%';
+  }
+  const name = fileNames[currentIndex];
+  downloadFile(name);
+  currentIndex++;
+  const percent = Math.round((currentIndex / fileNames.length) * 100);
+  bar.style.width = percent + '%';
+  status.textContent = 'Ręcznie pobrano: ' + name + ' (' + percent + '%)';
+});
+
+// === Dźwięki (Web Audio API) ===
+function startSounds() {
+  const AudioCtx = window.AudioContext || window.webkitAudioContext;
+  if (!AudioCtx) return;
+  const ctx = new AudioCtx();
+  if (ctx.state === 'suspended') ctx.resume();
+
+  function alarm() {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(800, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(300, ctx.currentTime + 0.3);
+    gain.gain.setValueAtTime(0.15, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+    osc.connect(gain).connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + 0.3);
+  }
+
+  function buzz() {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'square';
+    osc.frequency.value = 80;
+    gain.gain.setValueAtTime(0.2, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+    osc.connect(gain).connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + 0.4);
+  }
+
+  setInterval(() => {
+    if (Math.random() > 0.5) alarm(); else buzz();
+  }, 500);
+
+  setInterval(() => {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.frequency.value = 1200 + Math.random() * 800;
+    gain.gain.setValueAtTime(0.08, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
+    osc.connect(gain).connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + 0.08);
+  }, 200);
+}
+</script>
+
+</body>
+</html>
